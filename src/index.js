@@ -2,45 +2,103 @@
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
-let svgn = (tagName, attributes = {}, childExp = [], mount = {}) => {
+let cn = (create) => (...args) => {
+    let tagName,
+        attributes = {},
+        childExp = [];
+
+    let first = args.shift();
+
     let node = null;
+
     if (isNode(tagName)) {
         node = tagName;
     } else {
-        node = document.createElementNS(svgNS, tagName);
+        let parts = splitTagNameAttribute(first);
+
+        if (parts.length > 1) { // not only tagName
+            tagName = parts[0];
+            attributes = parts[1];
+        } else {
+            tagName = first;
+        }
+
+        node = create(tagName);
     }
 
-    applyNode(node, attributes, childExp, mount);
+    attributes = parseAttribute(attributes);
+
+    let next = args.shift();
+    if (isArray(next) || isString(next)) {
+        childExp = next;
+    } else if (isObject(next)) {
+        attributes = merge(attributes, next);
+        childExp = args.shift() || [];
+    }
+
+    applyNode(node, attributes, childExp);
 
     return node;
 };
 
-let n = (tagName, attributes = {}, childExp = [], mount = {}) => {
-    let node = null;
-    if (isNode(tagName)) {
-        node = tagName;
-    } else {
-        node = document.createElement(tagName);
+let merge = (map1 = {}, map2) => {
+    for (let name in map2) {
+        map1[name] = map2[name];
     }
-
-    applyNode(node, attributes, childExp, mount);
-
-    return node;
+    return map1;
 };
 
-let applyNode = (node, attributes, childExp, mount) => {
+let splitTagNameAttribute = (str = '') => {
+    let tagName = str.split(' ')[0];
+    let attr = str.substring(tagName.length);
+    attr = attr && attr.trim();
+    if (attr) {
+        return [tagName, attr];
+    } else {
+        return [tagName];
+    }
+};
+
+const ITEM_REG = /([\w-]+)\s*=\s*(([\w-]+)|('.*?')|(".*?"))/;
+
+// TODO better key=value grammer
+let parseAttribute = (attributes) => {
+    // key=value key=value
+    // value='abc' value=true value=123 value="def"
+    if (isString(attributes)) {
+        let str = attributes.trim(),
+            kvs = [];
+
+        let stop = false;
+        while (!stop) {
+            let newstr = str.replace(ITEM_REG, (matchStr, $1, $2) => {
+                kvs.push([$1, $2]);
+                return '';
+            }).trim();
+            if (newstr === str) {
+                stop = true;
+            }
+            str = newstr;
+        }
+
+        attributes = {};
+        for (let i = 0; i < kvs.length; i++) {
+            let [key, value] = kvs[i];
+            if (value[0] === '\'' && value[value.length - 1] === '\'' ||
+                value[0] === '"' && value[value.length - 1] === '"') {
+                value = value.substring(1, value.length - 1);
+            }
+            attributes[key] = value;
+        }
+    }
+
+    return attributes;
+};
+
+let applyNode = (node, attributes, childExp) => {
     setAttributes(node, attributes);
 
     appendChildExp(node, childExp);
-
-    hookData(node, mount);
-};
-
-let hookData = (node, mount) => {
-    // hook data
-    for (var name in mount) {
-        node[name] = mount[name];
-    }
 };
 
 let setAttributes = (node, attributes) => {
@@ -54,7 +112,7 @@ let setAttributes = (node, attributes) => {
 };
 
 let getStyleString = (attr = '') => {
-    if (typeof attr === 'string') {
+    if (isString(attr)) {
         return attr;
     }
 
@@ -98,7 +156,9 @@ let isArray = v => v && typeof v === 'object' && typeof v.length === 'number';
 
 let isObject = v => v && typeof v === 'object';
 
+let isString = v => typeof v === 'string';
+
 module.exports = {
-    n,
-    svgn
+    svgn: cn((tagName) => document.createElementNS(svgNS, tagName)),
+    n: cn((tagName) => document.createElement(tagName))
 };

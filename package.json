@@ -21,5 +21,6 @@
   "bugs": {
     "url": "https://github.com/LoveKino/ncn/issues"
   },
-  "homepage": "https://github.com/LoveKino/ncn#readme"
+  "homepage": "https://github.com/LoveKino/ncn#readme",
+  "dependencies": {}
 }
