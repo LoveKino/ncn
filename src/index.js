@@ -3,7 +3,12 @@
 const svgNS = 'http://www.w3.org/2000/svg';
 
 let svgn = (tagName, attributes = {}, childExp = [], mount = {}) => {
-    let node = document.createElementNS(svgNS, tagName);
+    let node = null;
+    if (isNode(tagName)) {
+        node = tagName;
+    } else {
+        node = document.createElementNS(svgNS, tagName);
+    }
 
     applyNode(node, attributes, childExp, mount);
 
@@ -11,7 +16,12 @@ let svgn = (tagName, attributes = {}, childExp = [], mount = {}) => {
 };
 
 let n = (tagName, attributes = {}, childExp = [], mount = {}) => {
-    let node = document.createElement(tagName);
+    let node = null;
+    if (isNode(tagName)) {
+        node = tagName;
+    } else {
+        node = document.createElement(tagName);
+    }
 
     applyNode(node, attributes, childExp, mount);
 
@@ -35,8 +45,27 @@ let hookData = (node, mount) => {
 
 let setAttributes = (node, attributes) => {
     for (let name in attributes) {
-        node.setAttribute(name, attributes[name]);
+        let attr = attributes[name];
+        if (name === 'style') {
+            attr = getStyleString(attr);
+        }
+        node.setAttribute(name, attr);
     }
+};
+
+let getStyleString = (attr = '') => {
+    if (typeof attr === 'string') {
+        return attr;
+    }
+
+    if (!isObject(attr)) {
+        throw new TypeError(`Expect object for style object, but got ${attr}`);
+    }
+    let style = '';
+    for (let key in attr) {
+        style = `${style};${key}: ${attr[key]}`;
+    }
+    return style;
 };
 
 let appendChildExp = (node, childExp) => {
@@ -66,6 +95,8 @@ let isNode = (o) => {
 };
 
 let isArray = v => v && typeof v === 'object' && typeof v.length === 'number';
+
+let isObject = v => v && typeof v === 'object';
 
 module.exports = {
     n,
