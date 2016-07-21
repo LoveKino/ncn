@@ -127,21 +127,15 @@ let getStyleString = (attr = '') => {
 };
 
 let appendChildExp = (node, childExp) => {
-    if (isArray(childExp)) {
+    if (isNode(childExp)) {
+        node.appendChild(childExp);
+    } else if (isArray(childExp)) {
         for (let i = 0; i < childExp.length; i++) {
             let child = childExp[i];
             appendChildExp(node, child);
         }
-    } else {
-        addChild(node, childExp);
-    }
-};
-
-let addChild = (parent, child) => {
-    if (isNode(child)) {
-        parent.appendChild(child);
-    } else if (child) {
-        parent.textContent = child.toString();
+    } else if (childExp) {
+        node.textContent = childExp.toString();
     }
 };
 
