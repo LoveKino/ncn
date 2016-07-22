@@ -59,6 +59,7 @@ let getStyleString = (attr = '') => {
     for (let key in attr) {
         let value = attr[key];
         key = convertStyleKey(key);
+        value =convertStyleValue(value);
         style = `${style};${key}: ${value}`;
     }
     return style;
@@ -68,6 +69,13 @@ let convertStyleKey = (key) => {
     return key.replace(/[A-Z]/, (letter) => {
         return `-${letter.toLowerCase()}`;
     });
+};
+
+let convertStyleValue = (value) => {
+    if(typeof value === 'number'){
+        return value + 'px';
+    }
+    return value;
 };
 
 module.exports = parseAttribute;
