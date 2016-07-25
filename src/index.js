@@ -8,28 +8,37 @@ let parseAttribute = require('./parseAttribute');
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
-let cn = (create) => (...args) => {
+let cn = (create) => {
+    let nodeGen = nodeGener(create);
+    return (...args) => {
+        let {
+            tagName, attributes, childExp
+        } = parseArgs(args);
+        return nodeGen(tagName, attributes, childExp);
+    };
+};
+
+let nodeGener = (create) => (tagName, attributes, childExp) => {
+    let node = create(tagName);
+    applyNode(node, attributes, childExp);
+
+    return node;
+};
+
+let parseArgs = (args) => {
     let tagName,
         attributes = {},
         childExp = [];
 
     let first = args.shift();
 
-    let node = null;
+    let parts = splitTagNameAttribute(first);
 
-    if (isNode(tagName)) {
-        node = tagName;
+    if (parts.length > 1) { // not only tagName
+        tagName = parts[0];
+        attributes = parts[1];
     } else {
-        let parts = splitTagNameAttribute(first);
-
-        if (parts.length > 1) { // not only tagName
-            tagName = parts[0];
-            attributes = parts[1];
-        } else {
-            tagName = first;
-        }
-
-        node = create(tagName);
+        tagName = first;
     }
 
     let next = args.shift();
@@ -45,9 +54,11 @@ let cn = (create) => (...args) => {
 
     attributes = parseAttribute(attributes, nextAttr);
 
-    applyNode(node, attributes, childExp);
-
-    return node;
+    return {
+        tagName,
+        attributes,
+        childExp
+    };
 };
 
 let splitTagNameAttribute = (str = '') => {
@@ -60,7 +71,6 @@ let splitTagNameAttribute = (str = '') => {
         return [tagName];
     }
 };
-
 
 let applyNode = (node, attributes, childExp) => {
     setAttributes(node, attributes);
@@ -88,7 +98,15 @@ let appendChildExp = (node, childExp) => {
     }
 };
 
+let createElement = (tagName) => document.createElement(tagName);
+let createSvgElement = (tagName) => document.createElementNS(svgNS, tagName);
+
 module.exports = {
-    svgn: cn((tagName) => document.createElementNS(svgNS, tagName)),
-    n: cn((tagName) => document.createElement(tagName))
+    svgn: cn(createSvgElement),
+    n: cn(createElement),
+    parseArgs,
+    nodeGener,
+    createElement,
+    createSvgElement,
+    cn
 };
