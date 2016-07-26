@@ -44,6 +44,15 @@ let parseAttribute = (attributes, nextAttr) => {
         attributes.style = getStyleString(attributes.style);
     }
 
+    // TODO presudo
+    /*
+    if (attributes.presudo) {
+        for (let name in attributes.presudo) {
+            attributes.presudo[name] = getStyleString(attributes.presudo[name]);
+        }
+    }
+   */
+
     return attributes;
 };
 
@@ -59,7 +68,7 @@ let getStyleString = (attr = '') => {
     for (let key in attr) {
         let value = attr[key];
         key = convertStyleKey(key);
-        value =convertStyleValue(value);
+        value = convertStyleValue(value, key);
         style = `${style};${key}: ${value}`;
     }
     return style;
@@ -71,9 +80,20 @@ let convertStyleKey = (key) => {
     });
 };
 
-let convertStyleValue = (value) => {
-    if(typeof value === 'number'){
+let convertStyleValue = (value, key) => {
+    if (typeof value === 'number' && key !== 'z-index') {
         return value + 'px';
+    }
+    if (key === 'padding' || key === 'margin') {
+        let parts = value.split(' ');
+        for (let i = 0; i < parts.length; i++) {
+            let part = parts[i];
+            if (!isNaN(Number(part))) {
+                parts[i] = part + 'px';
+            }
+        }
+
+        value = parts.join(' ');
     }
     return value;
 };

@@ -1,3 +1,5 @@
+'use strict';
+
 let isArray = v => v && typeof v === 'object' && typeof v.length === 'number';
 
 let isObject = v => v && typeof v === 'object';
