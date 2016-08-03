@@ -12,15 +12,15 @@ let cn = (create) => {
     let nodeGen = nodeGener(create);
     return (...args) => {
         let {
-            tagName, attributes, childExp
+            tagName, attributes, childs
         } = parseArgs(args);
-        return nodeGen(tagName, attributes, childExp);
+        return nodeGen(tagName, attributes, childs);
     };
 };
 
-let nodeGener = (create) => (tagName, attributes, childExp) => {
+let nodeGener = (create) => (tagName, attributes, childs) => {
     let node = create(tagName);
-    applyNode(node, attributes, childExp);
+    applyNode(node, attributes, childs);
 
     return node;
 };
@@ -56,10 +56,12 @@ let parseArgs = (args) => {
 
     attributes = parseAttribute(attributes, nextAttr);
 
+    let childs = parseChildExp(childExp);
+
     return {
         tagName,
         attributes,
-        childExp
+        childs
     };
 };
 
@@ -74,10 +76,16 @@ let splitTagNameAttribute = (str = '') => {
     }
 };
 
-let applyNode = (node, attributes, childExp) => {
+let applyNode = (node, attributes, childs) => {
     setAttributes(node, attributes);
-
-    appendChildExp(node, childExp);
+    for (let i = 0; i < childs.length; i++) {
+        let child = childs[i];
+        if (isString(child)) {
+            node.textContent = child;
+        } else {
+            node.appendChild(child);
+        }
+    }
 };
 
 let setAttributes = (node, attributes) => {
@@ -87,17 +95,19 @@ let setAttributes = (node, attributes) => {
     }
 };
 
-let appendChildExp = (node, childExp) => {
+let parseChildExp = (childExp) => {
+    let ret = [];
     if (isNode(childExp)) {
-        node.appendChild(childExp);
+        ret.push(childExp);
     } else if (isArray(childExp)) {
         for (let i = 0; i < childExp.length; i++) {
             let child = childExp[i];
-            appendChildExp(node, child);
+            ret = ret.concat(parseChildExp(child));
         }
     } else if (childExp) {
-        node.textContent = childExp.toString();
+        ret.push(childExp.toString());
     }
+    return ret;
 };
 
 let createElement = (tagName) => document.createElement(tagName);
