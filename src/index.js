@@ -47,7 +47,7 @@ let parseArgs = (args) => {
 
     let nextAttr = {};
 
-    if (isArray(next) || isString(next)) {
+    if (isArray(next) || isString(next) || isNode(next)) {
         childExp = next;
     } else if (isObject(next)) {
         nextAttr = next;
