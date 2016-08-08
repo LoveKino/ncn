@@ -1,26 +1,30 @@
 {
-  "name": "ncn",
-  "version": "0.0.1",
-  "description": "dom node create api",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LoveKino/ncn.git"
-  },
-  "keywords": [
-    "node",
-    "dom",
-    "create",
-    "api"
-  ],
-  "author": "ddchen",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/LoveKino/ncn/issues"
-  },
-  "homepage": "https://github.com/LoveKino/ncn#readme",
-  "dependencies": {}
+    "name": "ncn",
+    "version": "0.0.1",
+    "description": "dom node create api",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LoveKino/ncn.git"
+    },
+    "keywords": [
+        "node",
+        "dom",
+        "create",
+        "api"
+    ],
+    "author": "ddchen",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/LoveKino/ncn/issues"
+    },
+    "homepage": "https://github.com/LoveKino/ncn#readme",
+    "dependencies": {},
+    "link_dependencies": {
+        "basetype": "~0.0.1",
+        "bolzano": "~0.0.1"
+    }
 }

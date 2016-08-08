@@ -1,8 +1,12 @@
 'use strict';
 
 let {
-    isString, isObject, merge
-} = require('./util');
+    isString, isObject
+} = require('basetype');
+
+let {
+    mergeMap
+} = require('bolzano');
 
 const ITEM_REG = /([\w-]+)\s*=\s*(([\w-]+)|('.*?')|(".*?"))/;
 
@@ -38,7 +42,7 @@ let parseAttribute = (attributes, nextAttr) => {
         }
     }
     // merge
-    attributes = merge(attributes, nextAttr);
+    attributes = mergeMap(attributes, nextAttr);
 
     if (attributes.style) {
         attributes.style = getStyleString(attributes.style);

@@ -1,8 +1,8 @@
 'use strict';
 
 let {
-    isString, isObject, isNode, isArray
-} = require('./util');
+    isString, isObject, isNode, likeArray
+} = require('basetype');
 
 let parseAttribute = require('./parseAttribute');
 
@@ -47,7 +47,7 @@ let parseArgs = (args) => {
 
     let nextAttr = {};
 
-    if (isArray(next) || isString(next) || isNode(next)) {
+    if (likeArray(next) || isString(next) || isNode(next)) {
         childExp = next;
     } else if (isObject(next)) {
         nextAttr = next;
@@ -99,7 +99,7 @@ let parseChildExp = (childExp) => {
     let ret = [];
     if (isNode(childExp)) {
         ret.push(childExp);
-    } else if (isArray(childExp)) {
+    } else if (likeArray(childExp)) {
         for (let i = 0; i < childExp.length; i++) {
             let child = childExp[i];
             ret = ret.concat(parseChildExp(child));
@@ -111,6 +111,7 @@ let parseChildExp = (childExp) => {
 };
 
 let createElement = (tagName) => document.createElement(tagName);
+
 let createSvgElement = (tagName) => document.createElementNS(svgNS, tagName);
 
 module.exports = {
