@@ -1,7 +1,7 @@
 'use strict';
 
 let {
-    isString, isObject, isNode, likeArray
+    isString, isObject, isNode, likeArray, isNumber, isBool
 } = require('basetype');
 
 let parseAttribute = require('./parseAttribute');
@@ -47,7 +47,11 @@ let parseArgs = (args) => {
 
     let nextAttr = {};
 
-    if (likeArray(next) || isString(next) || isNode(next)) {
+    if (likeArray(next) ||
+        isString(next) ||
+        isNode(next) ||
+        isNumber(next) ||
+        isBool(next)) {
         childExp = next;
     } else if (isObject(next)) {
         nextAttr = next;
