@@ -41,7 +41,7 @@ let parseArgs = (args) => {
         tagName = first;
     }
 
-    tagName = tagName.toLowerCase();
+    tagName = tagName.toLowerCase().trim();
 
     let next = args.shift();
 
