@@ -1,6 +1,6 @@
 {
   "name": "ncn",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "dom node create api",
   "main": "index.js",
   "scripts": {
