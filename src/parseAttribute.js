@@ -68,14 +68,14 @@ let getStyleString = (attr = '') => {
     if (!isObject(attr)) {
         throw new TypeError(`Expect object for style object, but got ${attr}`);
     }
-    let style = '';
+    let styles = [];
     for (let key in attr) {
         let value = attr[key];
         key = convertStyleKey(key);
         value = convertStyleValue(value, key);
-        style = `${style};${key}: ${value}`;
+        styles.push(`${key}: ${value}`);
     }
-    return style;
+    return styles.join(';');
 };
 
 let convertStyleKey = (key) => {
