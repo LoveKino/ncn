@@ -84,10 +84,10 @@ let applyNode = (node, attributes, childs) => {
     setAttributes(node, attributes);
     for (let i = 0; i < childs.length; i++) {
         let child = childs[i];
-        if (isString(child)) {
-            node.textContent = child;
-        } else {
+        if (isNode(child)) {
             node.appendChild(child);
+        } else {
+            node.textContent = child + '';
         }
     }
 };
@@ -108,8 +108,8 @@ let parseChildExp = (childExp) => {
             let child = childExp[i];
             ret = ret.concat(parseChildExp(child));
         }
-    } else if (childExp) {
-        ret.push(childExp.toString());
+    } else if (childExp !== null && childExp !== undefined) {
+        ret.push(childExp);
     }
     return ret;
 };
